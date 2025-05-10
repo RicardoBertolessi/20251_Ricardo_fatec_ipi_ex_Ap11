@@ -76,3 +76,28 @@ begin
     call total_pedidos(1);
 end;
 $$
+
+--1.3
+
+create or replace procedure total_pedidos_out( in cod int, out total int)
+LANGUAGE plpgsql
+as $$
+BEGIN
+
+    select count(cod_pedido) into total from tb_pedido
+    where cod_cliente = cod;    
+
+    INSERT INTO log (nome_operacao)
+    VALUES ('total_pedidos');
+
+end;
+$$
+
+do $$
+DECLARE
+    total int;
+begin
+    call total_pedidos_out(1, total);
+    raise notice 'O total de peddidos desse cliente é %', total;
+end;
+$$
