@@ -50,3 +50,29 @@ create table log(
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     nome_operacao varchar(200)
 )
+
+
+--1.2
+
+create or replace procedure total_pedidos(cod int)
+LANGUAGE plpgsql
+as $$
+DECLARE
+    total_pedidos_cliente int;
+BEGIN
+    select count(cod_pedido) into total_pedidos_cliente from tb_pedido
+    where cod_cliente = cod;    
+
+    raise notice 'O total de peddidos desse cliente é %', total_pedidos_cliente;
+
+    INSERT INTO log (nome_operacao)
+    VALUES ('total_pedidos');
+
+end;
+$$
+
+do $$
+begin
+    call total_pedidos(1);
+end;
+$$
