@@ -63,7 +63,7 @@ BEGIN
     select count(cod_pedido) into total_pedidos_cliente from tb_pedido
     where cod_cliente = cod;    
 
-    raise notice 'O total de peddidos desse cliente é %', total_pedidos_cliente;
+    raise notice 'O total de pedidos desse cliente é %', total_pedidos_cliente;
 
     INSERT INTO log (nome_operacao)
     VALUES ('total_pedidos');
@@ -88,7 +88,7 @@ BEGIN
     where cod_cliente = cod;    
 
     INSERT INTO log (nome_operacao)
-    VALUES ('total_pedidos');
+    VALUES ('total_pedidos_out');
 
 end;
 $$
@@ -98,6 +98,32 @@ DECLARE
     total int;
 begin
     call total_pedidos_out(1, total);
-    raise notice 'O total de peddidos desse cliente é %', total;
+    raise notice 'O total de pedidos desse cliente é %', total;
+end;
+$$
+
+
+--1.4
+
+create or replace procedure total_pedidos_inout( INOUT total_pedidos int  )
+LANGUAGE plpgsql
+as $$
+BEGIN
+
+    select count(cod_pedido) into total_pedidos from tb_pedido
+    where cod_cliente = total_pedidos;    
+
+    INSERT INTO log (nome_operacao)
+    VALUES ('total_pedidos_inout');
+
+end;
+$$
+
+do $$
+DECLARE
+    cod_cliente int := 1 ;
+begin
+    call total_pedidos_inout(cod_cliente);
+    raise notice 'O total de pedidos desse cliente é %', cod_cliente;
 end;
 $$
