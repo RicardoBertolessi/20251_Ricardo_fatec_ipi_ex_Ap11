@@ -127,3 +127,34 @@ begin
     raise notice 'O total de pedidos desse cliente é %', cod_cliente;
 end;
 $$
+
+
+
+--1.5
+CREATE OR REPLACE PROCEDURE cadastrar_clientes(OUT mensagem TEXT, VARIADIC nomes TEXT[])
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nome TEXT;
+BEGIN
+    FOREACH nome IN ARRAY nomes
+    LOOP
+        INSERT INTO tb_cliente(nome) VALUES (nome);
+    END LOOP;
+
+    mensagem := 'Os clientes: ' || array_to_string(nomes, ', ') || ' foram cadastrados.';
+
+    INSERT INTO log(nome_operacao)
+    VALUES ('cadastrar_clientes');
+END;
+$$;
+
+DO $$
+DECLARE
+    mensagem TEXT;
+BEGIN
+    CALL cadastrar_clientes(mensagem, 'Pedro', 'Ana', 'João');
+    RAISE NOTICE '%', mensagem;
+END;
+$$;
+
