@@ -40,3 +40,13 @@ CONSTRAINT fk_item FOREIGN KEY (cod_item) REFERENCES tb_item (cod_item),
 CONSTRAINT fk_pedido FOREIGN KEY (cod_pedido) REFERENCES tb_pedido
 (cod_pedido)
 );
+
+
+
+
+--1.1
+create table log(
+    cod_log serial primary key,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    nome_operacao varchar(200)
+)
